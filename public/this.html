@@ -1,0 +1,344 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
+<head>
+    <title>This is a programming language</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/favicon.ico">
+
+    <!-- CSS Global Compulsory -->
+    <link rel="stylesheet" href="/assets/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- CSS Implementing Plugins -->
+    <link rel="stylesheet" href="/assets/plugins/line-icons/line-icons.css">
+    <link rel="stylesheet" href="/assets/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/plugins/owl-carousel/owl-carousel/owl.carousel.css">    
+    <link rel="stylesheet" href="/assets/plugins/sky-forms/version-2.0.1/css/custom-sky-forms.css">
+    <!--[if lt IE 9]><link rel="stylesheet" href="css/sky-forms-ie8.css"><![endif]-->
+
+    <!-- CSS Page Style -->    
+    <link rel="stylesheet" href="/assets/css/pages/page_search.css">
+
+    <!-- CSS Theme -->    
+    <link rel="stylesheet" href="/assets/css/theme-colors/default.css">
+
+    <!-- CSS Customization -->
+    <link rel="stylesheet" href="/assets/css/custom.css">
+
+
+<style>
+
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;c  slsld
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 10px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+</style>
+
+  </head>
+
+<body>
+<div class="wrapper">
+    <!--=== Header ===-->    
+    <div class="header">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="container">
+
+               <a href="this.html"> This is a programming language.<a>
+            
+                <!-- Topbar Navigation -->
+                <ul class="loginbar pull-right">
+                    <li class="languagesSelector">
+                        <i class="fa fa-globe"></i>
+                        <a>Languages</a>
+                        <ul class="languages">
+                            <li class="active">
+                                <a href="#">English <i class="fa fa-check"></i></a> 
+                            </li>
+                            <li><a href="#">Spanish</a></li>
+                            <li><a href="#">Russian</a></li>
+                            <li><a href="#">German</a></li>
+                        </ul>
+                    </li>
+                    <li class="topbar-devider"></li>   
+                    <li><a href="faq.html">faq</a></li>
+                </ul>
+                <!-- End Topbar Navigation -->
+            </div>
+        </div>
+        <!-- End Topbar -->
+    
+    </div>
+    <!--=== End Header ===-->    
+
+    <div class="search-block parallaxBg">
+        <div class="container">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="input-group">
+                    <input id="paste" type="text" class="form-control" placeholder="Ask what this is.">
+                    <span class="input-group-btn">
+                        <button id="paste-go" class="first last btn-u btn-u-lg" type="button"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>    
+    </div>
+    
+
+        <div class="container">
+            <div class="row">
+
+                <div id="tree" class="col-sm-8">
+                </div>
+                <div class="col-sm-4">
+                    <img id="#convolve" src="http://skyberrys-blog.appspot.com/assets/img/works/2.jpg"></img>
+
+                </div>
+                </div>
+            <div class="clear"></div>
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+
+                <script src="http://d3js.org/d3.v3.min.js"></script>
+                <script>
+				
+				var socket = io();
+
+                var margin = {top: 20, right: 120, bottom: 20, left: 120},
+                    width = 2860 - margin.right - margin.left,
+                    height = 800 - margin.top - margin.bottom;
+                    
+                var i = 0,
+                    duration = 750,
+                    root;
+
+                var tree = d3.layout.tree()
+                    .size([height, width]);
+
+                var diagonal = d3.svg.diagonal() 
+                    .projection(function(d) { return [d.y, d.x]; });
+
+                var svg = d3.select("#tree").append("svg")
+                    .attr("width", width + margin.right + margin.left)
+                    .attr("height", height + margin.top + margin.bottom)
+                  .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                d3.json("/assets/json/this_backup2.json", function(error, flare) {
+                  root = flare;
+                  root.x0 = height / 2;
+                  root.y0 = 0;
+
+                  function collapse(d) {
+                    if (d.children) {
+                      d._children = d.children;
+                      d._children.forEach(collapse);
+                      d.children = null;
+                    }
+                  }
+
+                  root.children.forEach(collapse);
+                  update(root);
+				  //console.log("inside of the tree");
+                });
+
+                d3.select(self.frameElement).style("height", "800px");
+
+                function update(source) {
+
+                  // Compute the new tree layout.
+                  var nodes = tree.nodes(root).reverse(),
+                      links = tree.links(nodes);
+
+                  // Normalize for fixed-depth.
+                  nodes.forEach(function(d) { d.y = d.depth * 180; });
+
+                  // Update the nodes…
+                  var node = svg.selectAll("g.node")
+                      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+                  // Enter any new nodes at the parent's previous position.
+                  var nodeEnter = node.enter().append("g")
+                      .attr("class", "node")
+                      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+                      .on("click", click);
+
+                  nodeEnter.append("circle")
+                      .attr("r", 1e-6)
+                      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+                  nodeEnter.append("text")
+                      .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+                      .attr("dy", ".35em")
+                      .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+                      .text(function(d) { return d.name; })
+                      .style("fill-opacity", 1e-6);
+
+                  // Transition nodes to their new position.
+                  var nodeUpdate = node.transition()
+                      .duration(duration)
+                      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+                  nodeUpdate.select("circle")
+                      .attr("r", 4.5)
+                      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+                  nodeUpdate.select("text")
+                      .style("fill-opacity", 1);
+
+                  // Transition exiting nodes to the parent's new position.
+                  var nodeExit = node.exit().transition()
+                      .duration(duration)
+                      .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+                      .remove();
+
+                  nodeExit.select("circle")
+                      .attr("r", 1e-6);
+
+                  nodeExit.select("text")
+                      .style("fill-opacity", 1e-6);
+
+                  // Update the links…
+                  var link = svg.selectAll("path.link")
+                      .data(links, function(d) { return d.target.id; });
+
+                  // Enter any new links at the parent's previous position.
+                  link.enter().insert("path", "g")
+                      .attr("class", "link")
+                      .attr("d", function(d) {
+                        var o = {x: source.x0, y: source.y0};
+                        return diagonal({source: o, target: o});
+                      });
+
+                  // Transition links to their new position.
+                  link.transition()
+                      .duration(duration)
+                      .attr("d", diagonal);
+
+                  // Transition exiting nodes to the parent's new position.
+                  link.exit().transition()
+                      .duration(duration)
+                      .attr("d", function(d) {
+                        var o = {x: source.x, y: source.y};
+                        return diagonal({source: o, target: o});
+                      })
+                      .remove();
+
+                  // Stash the old positions for transition.
+                  nodes.forEach(function(d) {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                  });
+                }
+
+                // Toggle children on click.
+                function click(d) {
+                  console.log(d);
+                  if (d.children) {
+                    d._children = d.children;
+                    d.children = null;
+                  } else {
+                    d.children = d._children;
+                    d._children = null;
+                    document.getElementById("#convolve").src=d.url;
+                  }
+                  update(d);
+                }
+			
+var original = "";
+				var button= document.querySelector("button"); // Accessing The Button // 
+				button.addEventListener("click", check); // Adding event to call function when clicked // 
+
+				function check(){ 
+				console.log("clicked");
+				var x = document.getElementById("paste").value;
+				console.log(x);
+				socket.emit('whatisthis', x);
+				}; // This Code Works Fine // 
+
+var form = document.getElementById("paste");
+
+var original = form.addEventListener("input", function (original) {
+    console.log("Form has changed!");
+	var x = document.getElementById("paste").value;
+	console.log(x,original.data);
+	if (original.data == " ") {
+	console.log(x.split(" ")); 
+    socket.emit('whatisthis', x);
+	}
+	return x;
+});
+
+
+if(button.clicked==true){console.log("Button Clicked");}
+
+
+                </script>
+
+                    <!-- <div class="col-md-10">   
+                    <div id="vis"></div>                  
+                    </div>
+                    
+                    <div class="col-md-2">   
+                    <div id="text"></div>   
+                    <div id="heat"></div>              
+                    </div>
+ -->                    
+            
+
+        </div>
+		
+    </div>     
+    <!--=== End Footer Version 1 ===-->
+</div><!--/End Wrapepr-->
+
+<!-- JS Global Compulsory -->           
+<script type="text/javascript" src="/assets/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/jquery/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script> 
+<!-- JS Implementing Plugins -->
+<script type="text/javascript" src="/assets/plugins/back-to-top.js"></script>
+<script type="text/javascript" src="/assets/plugins/jquery.parallax.js"></script>
+<script type="text/javascript" src="/assets/plugins/counter/waypoints.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/counter/jquery.counterup.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/owl-carousel/owl-carousel/owl.carousel.js"></script>
+<!-- JS Customization -->
+<script>
+
+</script>
+
+<script type="text/javascript" src="/assets/js/wordtree/d3.min.js"></script>
+
+
+<!--[if lt IE 9]>
+    <script src="/assets/plugins/respond.js"></script>
+    <script src="/assets/plugins/html5shiv.js"></script>    
+<![endif]-->
+
+</body>
+</html>

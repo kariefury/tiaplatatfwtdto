@@ -1,0 +1,27 @@
+{
+ "name": "this",
+ "url": "/assets/this/this.png",
+ "children": [
+  {
+   "name": "is",
+   "url": "/assets/this/is/is.png",
+   "children": [
+    {
+     "name": "a",
+     "url": "/assets/this/is/a/a.png",
+     "children": [
+      {"name": "purple", "url": "/assets/this/is/a/purple/purple.png", "children":[ {"name":"flower", "size": 3938, "url":"http://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Purple_flower_%284764445139%29.jpg/1162px-Purple_flower_%284764445139%29.jpg"}]},
+      {"name": "work", "url" : "/assets/this/is/a/work/work.png", "children":[ {"name":"of",  "url" : "/assets/this/is/a/work/of/of.png" }]}
+      ]
+    }
+   ]
+  },
+  {
+   "name": "means",
+   "url": "/assets/this/means/means.png",
+   "children": [
+    {"name": "something", "size": 17010, "url":"https://pbs.twimg.com/media/CAUT5MuUkAA4dW-.jpg"}
+   ]
+  }
+ ]
+}

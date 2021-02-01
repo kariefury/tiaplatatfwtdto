@@ -1,0 +1,327 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
+<head>
+    <title>Do you see This is a programming language</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/favicon.ico">
+
+    <!-- CSS Global Compulsory -->
+    <link rel="stylesheet" href="/assets/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- CSS Implementing Plugins -->
+    <link rel="stylesheet" href="/assets/plugins/line-icons/line-icons.css">
+    <link rel="stylesheet" href="/assets/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/plugins/owl-carousel/owl-carousel/owl.carousel.css">    
+    <link rel="stylesheet" href="/assets/plugins/sky-forms/version-2.0.1/css/custom-sky-forms.css">
+    <!--[if lt IE 9]><link rel="stylesheet" href="css/sky-forms-ie8.css"><![endif]-->
+
+    <!-- CSS Page Style -->    
+    <link rel="stylesheet" href="/assets/css/pages/page_search.css">
+
+    <!-- CSS Theme -->    
+    <link rel="stylesheet" href="/assets/css/theme-colors/default.css">
+
+    <!-- CSS Customization -->
+    <link rel="stylesheet" href="/assets/css/custom.css">
+
+    <script language="javascript" src="p5.js"></script>
+<!--    <script language="javascript" src="p5.dom.js"></script> -->
+
+
+  </head>
+
+<body>
+<div id="creativeCode" class="wrapper">
+    <!--=== Header ===-->    
+    <div class="search-block parallaxBg">
+        <div class="container">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="input-group">
+                    <input id="paste" type="text" class="form-control" placeholder="Ask what this is.">
+                    <span class="input-group-btn">
+                        <button id="paste-go" class="first last btn-u btn-u-lg" type="button"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>    
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+
+
+<script>
+let capture;
+var myCanvas;
+var myColorsPopulationCode = "000000110011111100001011001110110000011100110111000001110010111100000111001111010000101100111110000001100011111100000111000111110000100100111111000010110001111100001011001111010000011100111110000010100011111100001011001101110000010100111111000001110011101100001011001011110000110100011111000011010010111100001101001101110000110100111011000011000011111100001101001111010000110100111110";
+var socket = io();
+var redie;
+var bluie;
+var greenie;
+var q;
+let theShader;
+
+
+function bin_to_int(eightbits) {
+  var c = 0;
+  var weight = 128;
+  var n = 0;
+  for (c = 0; c < eightbits.length; c++) {
+    n = n + eightbits[c]*weight;
+    weight = weight / 2.0;
+  }
+  return n;
+}
+
+var keysEnteredOverTime = "";
+var sizes = [28, 28, 16, 16, 14, 14, 12, 12, 11, 11, 11, 11, 10, 10, 10, 10, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1];
+
+var center_x;
+var center_y;
+var img_of_this;
+var keycursor;
+
+var thisFont;
+function preload() {
+  thisFont = loadFont('assets/PermanentMarker-Regular.ttf');
+  theShader = loadShader('shader.vert','shader.frag');
+  img_of_this = loadImage('img/this_image.png');
+}
+
+var see;
+var img;
+var draw_keyboard;
+function setup() {
+	see = true;
+  //myCanvas = createCanvas(displayWidth, displayHeight, WEBGL);
+  myCanvas = createCanvas(displayWidth, displayHeight);
+  myCanvas.parent('creativeCode');
+  capture = createCapture(VIDEO);
+  capture.hide();
+  q = 0;
+  center_x = -width/2;
+  center_y = -height/2;
+  draw_keyboard = false;
+}
+
+
+function mouseClicked() {
+	keycursor = {'x':mouseX,'y':mouseY };
+	//$("#paste").focus();
+  draw_keyboard = true;
+}
+
+var c = 0;
+var c_r = 0;
+var c_g = 0;
+var c_b = 0;
+
+var t = 0;
+
+function drawAKeyBoard() {
+  console.log("drawing a keyboard");
+  fill(color(255,91,91,255));
+  rect(0,0,10,10);
+ console.log(2*(height/3.0),width,height/3.0);
+ var h = 2*height/3.0;
+  rect(0,h,width,height/3.0);
+}
+
+function draw() {
+  //background(0);
+  //console.log(img);
+  //console.log(capture);
+  image(capture, 0, 0, width, width * capture.height / capture.width);
+  //filter(INVERT);
+  // shader() sets the active shader with our shader
+   
+   
+    
+   //texture(capture);
+   
+   //console.log(keycursor)
+      redie =  bin_to_int(myColorsPopulationCode.slice(q,q+8))/255.0;
+      bluie = bin_to_int(myColorsPopulationCode.slice(q+8,q+17));
+      greenie = bin_to_int(myColorsPopulationCode.slice(q+17,q+25));
+      alphaie = bin_to_int(myColorsPopulationCode.slice(q+25,q+33));
+
+  //draw_circle(center_x,center_y,sizes[q%sizes.length], sizes.length,0,sizes.length,color(redie,greenie,bluie,alphaie));    
+  
+  q = q + 33;
+  
+  if ( q > myColorsPopulationCode.length-33) {
+    q = 0;
+    c_r =  bin_to_int(myColorsPopulationCode.slice(c,c+8));
+    c_b = bin_to_int(myColorsPopulationCode.slice(c+8,c+17));
+    c_g = bin_to_int(myColorsPopulationCode.slice(c+17,c+25));
+    if (keycursor) {
+  	noStroke();
+  	fill(color(c_r,c_g,c_b,255));
+  	//rect(keycursor.x-width/2,keycursor.y-(height/2),width/24,height/13);
+    rect(keycursor.x,keycursor.y,width/24,height/13);
+  	}
+  c += 25;
+  c = c % myColorsPopulationCode.length;
+  }
+  if ( q > myColorsPopulationCode.length/2) {
+  	if (keycursor) {
+    stroke(color(c_r,c_g,c_b,255));
+    textSize(41);
+      textFont(thisFont);
+  //console.log(thisFont);
+    //console.log(keysEnteredOverTime);
+  	//text(keysEnteredOverTime,keycursor.x-width/2,keycursor.y-(height/2));
+    text(keysEnteredOverTime,keycursor.x,keycursor.y);
+    noStroke();
+  	fill(color(255,255,255,255));
+  	//rect((keycursor.x-width/2),keycursor.y-(height/2),width/30,height/12);
+    rect((keycursor.x),keycursor.y,width/30,height/12);
+
+  	}
+    
+  }
+
+
+  center_x = center_x + sizes.length;
+  if (center_x >= myCanvas.width-(sizes.length)) {
+    center_y = center_y + sizes.length/2;
+    //center_y = center_y % myCanvas.height;
+    center_x = -width/2;
+  }
+  
+  //updatePixels();
+  //img.pixels = pixels;
+  //console.log(pixels);
+  //img.updatePixels();
+  //console.log(displayWidth, pixels.length, float(pixels.length/(displayWidth*4)));
+  //ImageData myCanvas.createImageData(displayWidth, displayHeight);
+  //ImageData 
+//  ImageData myCanvas.createImageData(displayWidth,displayHeight);
+// img.imageData.width = displayWidth;
+// img.imageData.height = displayHeight;
+//  img.imageData.data = pixels;
+
+
+
+  //  = new ImageData(pixels, 2444);
+   // passing cam as a texture
+  // 
+   // rect gives us some geometry on the screen
+   
+     if (see) {
+   	  //console.log(img);
+      //shader(theShader);
+      fill(t%255,255,255,255);
+      //rect(-width/2,-height/2,width,height);   
+		  //theShader.setUniform('tex0',capture);
+      //theShader.setUniform('scale',(displayHeight*3)/img_of_this.height);
+      //theShader.setUniform('tex1',img_of_this);
+    //see = false;
+   }
+   if (draw_keyboard) {
+    drawAKeyBoard();
+   }
+   t++;
+}
+
+// KKKKKKKKK    KKKKKKKEEEEEEEEEEEEEEEEEEEEEEYYYYYYY       YYYYYYYIIIIIIIIII     OOOOOOOOO     
+// K:::::::K    K:::::KE::::::::::::::::::::EY:::::Y       Y:::::YI::::::::I   OO:::::::::OO   
+// K:::::::K    K:::::KE::::::::::::::::::::EY:::::Y       Y:::::YI::::::::I OO:::::::::::::OO 
+// K:::::::K   K::::::KEE::::::EEEEEEEEE::::EY::::::Y     Y::::::YII::::::IIO:::::::OOO:::::::O
+// KK::::::K  K:::::KKK  E:::::E       EEEEEEYYY:::::Y   Y:::::YYY  I::::I  O::::::O   O::::::O
+//   K:::::K K:::::K     E:::::E                Y:::::Y Y:::::Y     I::::I  O:::::O     O:::::O
+//   K::::::K:::::K      E::::::EEEEEEEEEE       Y:::::Y:::::Y      I::::I  O:::::O     O:::::O
+//   K:::::::::::K       E:::::::::::::::E        Y:::::::::Y       I::::I  O:::::O     O:::::O
+//   K:::::::::::K       E:::::::::::::::E         Y:::::::Y        I::::I  O:::::O     O:::::O
+//   K::::::K:::::K      E::::::EEEEEEEEEE          Y:::::Y         I::::I  O:::::O     O:::::O
+//   K:::::K K:::::K     E:::::E                    Y:::::Y         I::::I  O:::::O     O:::::O
+// KK::::::K  K:::::KKK  E:::::E       EEEEEE       Y:::::Y         I::::I  O::::::O   O::::::O
+// K:::::::K   K::::::KEE::::::EEEEEEEE:::::E       Y:::::Y       II::::::IIO:::::::OOO:::::::O
+// K:::::::K    K:::::KE::::::::::::::::::::E    YYYY:::::YYYY    I::::::::I OO:::::::::::::OO 
+// K:::::::K    K:::::KE::::::::::::::::::::E    Y:::::::::::Y    I::::::::I   OO:::::::::OO   
+// KKKKKKKKK    KKKKKKKEEEEEEEEEEEEEEEEEEEEEE    YYYYYYYYYYYYY    IIIIIIIIII     OOOOOOOOO     
+function keyTyped() {
+  keysEnteredOverTime += key;
+  console.log(keysEnteredOverTime);
+}
+function keyPressed() {
+  console.log("keyPressed", keyCode);
+  
+  if (keyCode == 49) {
+    
+  }
+  if (keyCode == 50) {
+  } 
+  if (keyCode == 51) {
+    myCode = "3";
+  } 
+  if (keyCode == 52) {
+    myCode = "4";
+    see = !see;
+  } 
+  if (keyCode == 53) {
+    myCode = "5";
+  }
+  if (keyCode == 80) {
+    if (rate == 0) {
+      rate = 100;
+    } else {
+      rate = 0;
+    }
+    frameRate(rate);
+  }  
+
+}
+               </script>
+
+                    <!-- <div class="col-md-10">   
+                    <div id="vis"></div>                  
+                    </div>
+                    
+                    <div class="col-md-2">   
+                    <div id="text"></div>   
+                    <div id="heat"></div>              
+                    </div>
+ -->                    
+            
+
+        </div>
+		
+    </div>     
+    <!--=== End Footer Version 1 ===-->
+</div><!--/End Wrapepr-->
+
+<!-- JS Global Compulsory -->           
+<script type="text/javascript" src="/assets/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/jquery/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script> 
+<!-- JS Implementing Plugins -->
+<script type="text/javascript" src="/assets/plugins/back-to-top.js"></script>
+<script type="text/javascript" src="/assets/plugins/jquery.parallax.js"></script>
+<script type="text/javascript" src="/assets/plugins/counter/waypoints.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/counter/jquery.counterup.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/owl-carousel/owl-carousel/owl.carousel.js"></script>
+<!-- JS Customization -->
+<script>
+
+</script>
+
+
+
+<!--[if lt IE 9]>
+    <script src="/assets/plugins/respond.js"></script>
+    <script src="/assets/plugins/html5shiv.js"></script>    
+<![endif]-->
+
+</body>
+</html>
