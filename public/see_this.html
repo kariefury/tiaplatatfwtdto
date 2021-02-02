@@ -44,19 +44,8 @@
 <body>
 <div id="creativeCode" class="wrapper">
     <!--=== Header ===-->    
-    <div class="search-block parallaxBg">
-        <div class="container">
-            <div class="col-md-6 col-md-offset-3">
-                <div class="input-group">
-                    <input id="paste" type="text" class="form-control" placeholder="Ask what this is.">
-                    <span class="input-group-btn">
-                        <button id="paste-go" class="first last btn-u btn-u-lg" type="button"><i class="fa fa-search"></i></button>
-                    </span>
-                </div>
-            </div>
-        </div>    
-    </div>
-</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
 
 
@@ -100,25 +89,43 @@ function preload() {
 
 var see;
 var img;
-var draw_keyboard;
+var capture_past;
 function setup() {
-	see = true;
-  //myCanvas = createCanvas(displayWidth, displayHeight, WEBGL);
-  myCanvas = createCanvas(displayWidth, displayHeight);
+  see = true;
+  var q = 0;
+  img = createImage(displayWidth,displayHeight);
+  for(i = 0; i < img.width; i++) {
+    for(j=0; j< img.height; j++) {
+      redie =  bin_to_int(myColorsPopulationCode.slice(q,q+8));
+      bluie = bin_to_int(myColorsPopulationCode.slice(q+8,q+17));
+      greenie = bin_to_int(myColorsPopulationCode.slice(q+17,q+25));
+      alphaie = bin_to_int(myColorsPopulationCode.slice(q+25,q+33));
+
+  //draw_circle(center_x,center_y,sizes[q%sizes.length], sizes.length,0,sizes.length,color(redie,greenie,bluie,alphaie));    
+  
+      q = q + 33;
+      if ( q > myColorsPopulationCode.length-33) {
+      q = 0;
+      }
+      //console.log(redie,bluie,greenie);
+      img.set(i,j,color(redie,greenie,bluie,alphaie));
+      //img.set(i,j,color(0,90,120));
+    }
+  }
+  img.updatePixels();
+  myCanvas = createCanvas(displayWidth, displayHeight, WEBGL);
   myCanvas.parent('creativeCode');
   capture = createCapture(VIDEO);
   capture.hide();
   q = 0;
   center_x = -width/2;
   center_y = -height/2;
-  draw_keyboard = false;
+  frameRate(30);
 }
 
 
 function mouseClicked() {
-	keycursor = {'x':mouseX,'y':mouseY };
-	//$("#paste").focus();
-  draw_keyboard = true;
+  keycursor = {'x':mouseX,'y':mouseY };
 }
 
 var c = 0;
@@ -127,26 +134,30 @@ var c_g = 0;
 var c_b = 0;
 
 var t = 0;
-
-function drawAKeyBoard() {
-  console.log("drawing a keyboard");
-  fill(color(255,91,91,255));
-  rect(0,0,10,10);
- console.log(2*(height/3.0),width,height/3.0);
- var h = 2*height/3.0;
-  rect(0,h,width,height/3.0);
-}
-
 function draw() {
   //background(0);
   //console.log(img);
   //console.log(capture);
-  image(capture, 0, 0, width, width * capture.height / capture.width);
+  //image(img,-width/2, -height/2,width, height);
   //filter(INVERT);
   // shader() sets the active shader with our shader
    
-   
-    
+   if (see) {
+      console.log(capture_past);
+      shader(theShader);
+      fill(t%255,255,255,255);
+      rect(-width/2,-height/2,width,height);   
+      theShader.setUniform('tex0',capture);
+      theShader.setUniform('past',img);
+      theShader.setUniform('scale',(displayHeight*3)/img_of_this.height);
+      theShader.setUniform('tex1',img_of_this);
+    //see = false;
+   }
+   t++;
+    if (t % 200 == 0) {
+        capture_past = capture;
+      }
+    console.log(t);
    //texture(capture);
    
    //console.log(keycursor)
@@ -165,29 +176,26 @@ function draw() {
     c_b = bin_to_int(myColorsPopulationCode.slice(c+8,c+17));
     c_g = bin_to_int(myColorsPopulationCode.slice(c+17,c+25));
     if (keycursor) {
-  	noStroke();
-  	fill(color(c_r,c_g,c_b,255));
-  	//rect(keycursor.x-width/2,keycursor.y-(height/2),width/24,height/13);
-    rect(keycursor.x,keycursor.y,width/24,height/13);
-  	}
+    noStroke();
+    fill(color(c_r,c_g,c_b,255));
+    rect(keycursor.x-width/2,keycursor.y-(height/2),width/24,height/13);
+    }
   c += 25;
   c = c % myColorsPopulationCode.length;
   }
   if ( q > myColorsPopulationCode.length/2) {
-  	if (keycursor) {
+    if (keycursor) {
     stroke(color(c_r,c_g,c_b,255));
     textSize(41);
       textFont(thisFont);
   //console.log(thisFont);
     //console.log(keysEnteredOverTime);
-  	//text(keysEnteredOverTime,keycursor.x-width/2,keycursor.y-(height/2));
-    text(keysEnteredOverTime,keycursor.x,keycursor.y);
+    text(keysEnteredOverTime,keycursor.x-width/2,keycursor.y-(height/2));
     noStroke();
-  	fill(color(255,255,255,255));
-  	//rect((keycursor.x-width/2),keycursor.y-(height/2),width/30,height/12);
-    rect((keycursor.x),keycursor.y,width/30,height/12);
+    fill(color(255,255,255,255));
+    rect((keycursor.x-width/2),keycursor.y-(height/2),width/30,height/12);
 
-  	}
+    }
     
   }
 
@@ -218,20 +226,7 @@ function draw() {
   // 
    // rect gives us some geometry on the screen
    
-     if (see) {
-   	  //console.log(img);
-      //shader(theShader);
-      fill(t%255,255,255,255);
-      //rect(-width/2,-height/2,width,height);   
-		  //theShader.setUniform('tex0',capture);
-      //theShader.setUniform('scale',(displayHeight*3)/img_of_this.height);
-      //theShader.setUniform('tex1',img_of_this);
-    //see = false;
-   }
-   if (draw_keyboard) {
-    drawAKeyBoard();
-   }
-   t++;
+     
 }
 
 // KKKKKKKKK    KKKKKKKEEEEEEEEEEEEEEEEEEEEEEYYYYYYY       YYYYYYYIIIIIIIIII     OOOOOOOOO     
@@ -296,7 +291,7 @@ function keyPressed() {
             
 
         </div>
-		
+    
     </div>     
     <!--=== End Footer Version 1 ===-->
 </div><!--/End Wrapepr-->
