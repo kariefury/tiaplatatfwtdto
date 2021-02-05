@@ -79,7 +79,7 @@
         <div class="container">
             <div class="col-md-6 col-md-offset-3">
                 <div class="input-group">
-                    <input id="paste" type="text" class="form-control" placeholder="Ask what this is.">
+                    <input id="paste" type="text" class="form-control" placeholder="">
                     <span class="input-group-btn">
                         <button id="paste-go" class="first last btn-u btn-u-lg" type="button"><i class="fa fa-search"></i></button>
                       </span>
@@ -131,7 +131,7 @@ var keycursor;
 var thisFont;
 function preload() {
   thisFont = loadFont('assets/PermanentMarker-Regular.ttf');
-  theShader = loadShader('shader.vert','shader.frag');
+  theShader = loadShader('shader.vert','shader_convo.frag');
   img_of_this = loadImage('img/this_image.png');
 }
 
@@ -182,6 +182,27 @@ var c_g = 0;
 var c_b = 0;
 
 var t = 0;
+var symbol_from_story = [1.0, // 0
+1.0, // 1
+1.0, // 2
+1.0, // 3 
+1.0, // 4 
+1.0, // 5 
+1.0, // 6
+1.0, // 7 
+1.0, // 8
+1.0, // 9 
+1.0, // 10
+1.0, // 11
+1.0, // 12
+1.0, // 13 
+1.0, // 14 
+1.0, // 15 
+1.0, // 16
+1.0, // 17 
+1.0, // 18
+1.0, // 19 
+1.0];
 function draw() {
   //background(0);
   //console.log(img);
@@ -191,21 +212,40 @@ function draw() {
   // shader() sets the active shader with our shader
    
    if (see) {
-      console.log(capture_past);
+      //console.log(capture_past);
       shader(theShader);
       fill(t%255,255,255,255);
       rect(-width/2,-height/2,width,height);   
       theShader.setUniform('tex0',capture);
       theShader.setUniform('past',img);
       theShader.setUniform('scale',(displayHeight*3)/img_of_this.height);
-      theShader.setUniform('tex1',img_of_this);
+      theShader.setUniform('texSize',(displayWidth,displayHeight))
+      theShader.setUniform('tex1',img);
+      theShader.setUniform('symbol_from_story_0',symbol_from_story[0]);
+      theShader.setUniform('symbol_from_story_1',symbol_from_story[1]);
+      theShader.setUniform('symbol_from_story_2',symbol_from_story[2]);
+      theShader.setUniform('symbol_from_story_3',symbol_from_story[3]);
+      theShader.setUniform('symbol_from_story_4',symbol_from_story[4]);
+      theShader.setUniform('symbol_from_story_5',symbol_from_story[5]);
+      theShader.setUniform('symbol_from_story_6',symbol_from_story[6]);
+      theShader.setUniform('symbol_from_story_7',symbol_from_story[7]);
+      theShader.setUniform('symbol_from_story_8',symbol_from_story[8]);
+      theShader.setUniform('symbol_from_story_9',symbol_from_story[9]);
+      theShader.setUniform('symbol_from_story_10',symbol_from_story[10]);
+      theShader.setUniform('symbol_from_story_11',symbol_from_story[11]);
+      theShader.setUniform('symbol_from_story_12',symbol_from_story[12]);
+      theShader.setUniform('symbol_from_story_13',symbol_from_story[13]);
+      theShader.setUniform('symbol_from_story_14',symbol_from_story[14]);
+      theShader.setUniform('symbol_from_story_15',symbol_from_story[15]);
+      theShader.setUniform('symbol_from_story_16',symbol_from_story[16]);
+      theShader.setUniform('symbol_from_story_17',symbol_from_story[17]);
     //see = false;
    }
    t++;
     if (t % 200 == 0) {
         capture_past = capture;
       }
-    console.log(t);
+   // console.log(t);
    //texture(capture);
    
    //console.log(keycursor)
@@ -325,6 +365,20 @@ function keyPressed() {
   }  
 
 }
+
+var form = document.getElementById("paste");
+
+var original = form.addEventListener("input", function (original) {
+    console.log("Form has changed!");
+  var x = document.getElementById("paste").value;
+  console.log(x,original.data);
+  if (original.data == " ") {
+  console.log(x.split(" ")); 
+    //socket.emit('whatisthis', x);
+  }
+  return x;
+});
+
                </script>
 
                     <!-- <div class="col-md-10">   
