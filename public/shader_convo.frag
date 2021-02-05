@@ -111,6 +111,7 @@ void main() {
    texture2D(tex0,v_texCoord + vec2(-onePixel.x,onePixel.y))*symbol_from_story_16 +
    texture2D(tex1,v_texCoord + vec2(-onePixel.x,onePixel.y))*symbol_from_story_17 
    ) / 18.0; 
-  gl_FragColor = first_stage;
+   gl_FragColor = altColor;
+  //gl_FragColor = first_stage;
   //gl_FragColor = tex_past;
 }
