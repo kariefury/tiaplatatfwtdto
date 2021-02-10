@@ -16,6 +16,7 @@ uniform sampler2D tex1;
 uniform sampler2D past;
 uniform float scale;
 uniform vec2 u_textureSize;
+uniform bool start;
 uniform float symbol_from_story_0;
 uniform float symbol_from_story_1;
 uniform float symbol_from_story_2;
@@ -80,10 +81,10 @@ void main() {
   
   vec3 thresh = vec3(threshR,threshG,threshB);
   // render the output
-  vec4 first_stage = vec4(thresh, 1);
+  vec4 final_stage = vec4(thresh, 1);
   // Idea: Pass the source symbol into the shader as a list of 0's or 1's in the convolution kernel and only keep the ones 
   // because of multiplication through.
-  vec4 altColor = 
+  vec4 alt_color = 
    ( texture2D(tex0,vec2(1.0-v_texCoord.x, 1.0-v_texCoord.y))*symbol_from_story_0 +
    texture2D(tex1,vec2(1.0-v_texCoord.x, 1.0-v_texCoord.y))*symbol_from_story_1 + 
 
@@ -111,7 +112,7 @@ void main() {
    texture2D(tex0,v_texCoord + vec2(-onePixel.x,onePixel.y))*symbol_from_story_16 +
    texture2D(tex1,v_texCoord + vec2(-onePixel.x,onePixel.y))*symbol_from_story_17 
    ) / 18.0; 
-   gl_FragColor = altColor;
-  //gl_FragColor = first_stage;
+  if (start) { final_stage = alt_color; }
+  gl_FragColor = final_stage;  
   //gl_FragColor = tex_past;
 }

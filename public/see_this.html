@@ -80,9 +80,9 @@
             <div class="col-md-6 col-md-offset-3">
                 <div class="input-group">
                     <input id="paste" type="text" class="form-control" placeholder="">
-                    <span class="input-group-btn">
+                    <!--<span class="input-group-btn">
                         <button id="paste-go" class="first last btn-u btn-u-lg" type="button"><i class="fa fa-search"></i></button>
-                      </span>
+                      </span>-->
                   </div>
               </div>
           </div>    
@@ -128,11 +128,11 @@ var center_y;
 var img_of_this;
 var keycursor;
 
-var thisFont;
+//var thisFont;
 function preload() {
-  thisFont = loadFont('assets/PermanentMarker-Regular.ttf');
+  //thisFont = loadFont('assets/PermanentMarker-Regular.ttf');
   theShader = loadShader('shader.vert','shader_convo.frag');
-  img_of_this = loadImage('img/this_image.png');
+  //img_of_this = loadImage('img/this_image.png');
 }
 
 var see;
@@ -174,6 +174,7 @@ function setup() {
 
 function mouseClicked() {
   keycursor = {'x':mouseX,'y':mouseY };
+
 }
 
 var c = 0;
@@ -219,9 +220,10 @@ function draw() {
       rect(-width/2,-height/2,width,height);   
       theShader.setUniform('tex0',capture);
       theShader.setUniform('past',img);
-      theShader.setUniform('scale',(displayHeight*3)/img_of_this.height);
+      theShader.setUniform('scale',1);
       theShader.setUniform('texSize',(displayWidth,displayHeight))
       theShader.setUniform('tex1',img);
+      theShader.setUniform('start',start);
       theShader.setUniform('symbol_from_story_0',symbol_from_story[0]);
       theShader.setUniform('symbol_from_story_1',symbol_from_story[1]);
       theShader.setUniform('symbol_from_story_2',symbol_from_story[2]);
@@ -276,7 +278,7 @@ function draw() {
     if (keycursor) {
     stroke(color(c_r,c_g,c_b,255));
     textSize(41);
-      textFont(thisFont);
+      //textFont(thisFont);
   //console.log(thisFont);
     //console.log(keysEnteredOverTime);
     text(keysEnteredOverTime,keycursor.x-width/2,keycursor.y-(height/2));
@@ -368,9 +370,10 @@ function keyPressed() {
 }
 var rate = 1;
 var form = document.getElementById("paste");
-
+var start = false;
 var original = form.addEventListener("input", function (original) {
     console.log("Form has changed!");
+  start = true;
   var x = document.getElementById("paste").value;
   console.log(x,original.data);
   if (original.data == "T") {
