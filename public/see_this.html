@@ -66,6 +66,7 @@
                     </li>
                     <li class="topbar-devider"></li>   
                     <li><a href="faq.html">faq</a></li>
+
                 </ul>
                 <!-- End Topbar Navigation -->
             </div>
@@ -80,9 +81,9 @@
             <div class="col-md-6 col-md-offset-3">
                 <div class="input-group">
                     <input id="paste" type="text" class="form-control" placeholder="">
-                    <!--<span class="input-group-btn">
+                    <span class="input-group-btn">
                         <button id="paste-go" class="first last btn-u btn-u-lg" type="button"><i class="fa fa-search"></i></button>
-                      </span>-->
+                      </span>
                   </div>
               </div>
           </div>    
@@ -98,6 +99,7 @@
 
 
 <script>
+
 let capture;
 var myCanvas;
 var myColorsPopulationCode = "000000110011111100001011001110110000011100110111000001110010111100000111001111010000101100111110000001100011111100000111000111110000100100111111000010110001111100001011001111010000011100111110000010100011111100001011001101110000010100111111000001110011101100001011001011110000110100011111000011010010111100001101001101110000110100111011000011000011111100001101001111010000110100111110";
@@ -107,7 +109,6 @@ var bluie;
 var greenie;
 var q;
 let theShader;
-
 
 function bin_to_int(eightbits) {
   var c = 0;
@@ -133,6 +134,7 @@ function preload() {
   //thisFont = loadFont('assets/PermanentMarker-Regular.ttf');
   theShader = loadShader('shader.vert','shader_convo.frag');
   //img_of_this = loadImage('img/this_image.png');
+  //loadPixels();
 }
 
 var see;
@@ -161,8 +163,10 @@ function setup() {
     }
   }
   img.updatePixels();
+  setAttributes('preserveDrawingBuffer', true);
   myCanvas = createCanvas(displayWidth, displayHeight, WEBGL);
   myCanvas.parent('creativeCode');
+  
   capture = createCapture(VIDEO);
   capture.hide();
   q = 0;
@@ -214,6 +218,7 @@ function draw() {
   // shader() sets the active shader with our shader
    
    if (see) {
+
       //console.log(capture_past);
       shader(theShader);
       fill(t%255,255,255,255);
@@ -243,10 +248,17 @@ function draw() {
       theShader.setUniform('symbol_from_story_16',symbol_from_story[16]);
       theShader.setUniform('symbol_from_story_17',symbol_from_story[17]);
     //see = false;
+      //loadPixels();
+       // console.log(get(100,100,9,9));
    }
    t++;
     if (t % 200 == 0) {
         capture_past = capture;
+        
+        var canvas = document.getElementById('defaultCanvas0');
+        console.log(canvas);
+        var dataURL = canvas.toDataURL('image/png');
+        console.log(dataURL);
       }
    // console.log(t);
    //texture(capture);
@@ -297,26 +309,6 @@ function draw() {
     //center_y = center_y % myCanvas.height;
     center_x = -width/2;
   }
-  
-  //updatePixels();
-  //img.pixels = pixels;
-  //console.log(pixels);
-  //img.updatePixels();
-  //console.log(displayWidth, pixels.length, float(pixels.length/(displayWidth*4)));
-  //ImageData myCanvas.createImageData(displayWidth, displayHeight);
-  //ImageData 
-//  ImageData myCanvas.createImageData(displayWidth,displayHeight);
-// img.imageData.width = displayWidth;
-// img.imageData.height = displayHeight;
-//  img.imageData.data = pixels;
-
-
-
-  //  = new ImageData(pixels, 2444);
-   // passing cam as a texture
-  // 
-   // rect gives us some geometry on the screen
-   
      
 }
 
