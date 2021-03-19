@@ -30,6 +30,7 @@ var ay = [];
 
 var simple_this = [[28, ' '], [16, 'e'], [14, 'a'], [12, 's'], [11, 'r'], [11, 't'], [10, 'h'], [10, 'i'], [8, 'g'], [7, 'n'], [6, 'd'], [5, 'o'], [4, 'm'], [3, 'u'], [2, 'T'], [2, 'p'], [2, 'l'], [2, 'w'], [2, 'c'], [2, 'b'], [2, '.'], [1, 'f'], [1, '1'], [1, '4']]
 
+
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -49,14 +50,42 @@ function shuffle(array) {
   return array;
 }
 
-var shuffled_simple_this = shuffle(simple_this);
+var shuffled_simple_this;
 
+
+function draw_is(center_x,center_y,radius, number_points,first_point,last_point,color,map=false) {
+  var a;
+  var x; 
+  var y;
+  textSize(14);
+  var map_with_locations = [];
+  for (a = first_point; a < last_point; a++) {
+    fill(color);
+    stroke(0);
+    x = center_x + radius * cos(2 * PI * a / number_points);
+    y = center_y + radius * sin(2 * PI * a / number_points);
+  if (map == false) {
+    ellipse(x, y, 10, 10);    
+  } else {
+    ellipse(x, y, map[a][0]*2, map[a][0]*2);
+    fill(0);
+    textAlign(CENTER,CENTER);
+    text(map[a][1],x,y);
+    map_with_locations.push({'symbol':map[a][1],'x':x,'y':y})
+  }
+  }
+
+  //console.log(color)
+  return map_with_locations;
+  //return {'x':x,'y':y,'green':green(color),'red':red(color) };
+}
 
 function draw_circle(center_x,center_y,radius, number_points,first_point,last_point,color,map=false) {
   var a;
   var x; 
   var y;
   textSize(14);
+  var map_with_locations = [];
   for (a = first_point; a < last_point; a++) {
     fill(color);
     stroke(0);
@@ -69,10 +98,12 @@ function draw_circle(center_x,center_y,radius, number_points,first_point,last_po
 		fill(0);
 		textAlign(CENTER,CENTER);
 		text(map[a][1],x,y);
+    map_with_locations.push({'symbol':map[a][1],'x':x,'y':y})
 	}
   }
 
   //console.log(color)
+  //return map_with_locations;
   return {'x':x,'y':y,'green':green(color),'red':red(color) };
 }
 
@@ -133,11 +164,20 @@ function star(x, y, radius1, radius2, npoints) {
 // S::::::SSSSSS:::::SE::::::::::::::::::::E      T:::::::::T        UU:::::::::::::UU  P::::::::P          
 // S:::::::::::::::SS E::::::::::::::::::::E      T:::::::::T          UU:::::::::UU    P::::::::P          
 //  SSSSSSSSSSSSSSS   EEEEEEEEEEEEEEEEEEEEEE      TTTTTTTTTTT            UUUUUUUUU      PPPPPPPPPP          
-                                                                                                         
+            
+var locations = [];
+ var a_racetrack_positions = [];
+var a_racetrack = [{"symbol":"T","is_ID":0},{"symbol":"h","is_ID":2},{"symbol":"i","is_ID":3},{"symbol":"s","is_ID":1}, {"symbol":" ","is_ID":0},{"symbol":"i","is_ID":2},{"symbol":"s","is_ID":3},{"symbol":" ","is_ID":1}, {"symbol":"a","is_ID":0},{"symbol":" ","is_ID":2},{"symbol":"p","is_ID":3},{"symbol":"r","is_ID":1}, {"symbol":"o","is_ID":0},{"symbol":"g","is_ID":2},{"symbol":"r","is_ID":3},{"symbol":"a","is_ID":1}, {"symbol":"m","is_ID":0},{"symbol":"m","is_ID":2},{"symbol":"i","is_ID":3},{"symbol":"n","is_ID":1}, {"symbol":"g","is_ID":0},{"symbol":" ","is_ID":2},{"symbol":"l","is_ID":3},{"symbol":"a","is_ID":1},{"symbol":"n","is_ID":0},{"symbol":"g","is_ID":2},{"symbol":"u","is_ID":3},{"symbol":"a","is_ID":1}, {"symbol":"g","is_ID":0},{"symbol":"e","is_ID":2},{"symbol":" ","is_ID":3},{"symbol":"a","is_ID":1},{"symbol":"n","is_ID":0},{"symbol":"d","is_ID":2},{"symbol":" ","is_ID":3},{"symbol":"t","is_ID":1},{"symbol":"h","is_ID":0},{"symbol":"e","is_ID":2},{"symbol":"s","is_ID":3},{"symbol":"e","is_ID":1},{"symbol":" ","is_ID":0},{"symbol":"a","is_ID":2},{"symbol":"r","is_ID":3},{"symbol":"e","is_ID":1}, {"symbol":" ","is_ID":0},{"symbol":"t","is_ID":2},{"symbol":"h","is_ID":3},{"symbol":"e","is_ID":1}, {"symbol":" ","is_ID":0},{"symbol":"1","is_ID":2},{"symbol":"4","is_ID":3},{"symbol":" ","is_ID":1}, {"symbol":"w","is_ID":0},{"symbol":"o","is_ID":2},{"symbol":"r","is_ID":3},{"symbol":"d","is_ID":1}, {"symbol":"s","is_ID":0},{"symbol":" ","is_ID":2},{"symbol":"t","is_ID":3},{"symbol":"h","is_ID":1},{"symbol":"a","is_ID":0},{"symbol":"t","is_ID":2},{"symbol":" ","is_ID":3},{"symbol":"d","is_ID":1}, {"symbol":"e","is_ID":0},{"symbol":"f","is_ID":2},{"symbol":"i","is_ID":3},{"symbol":"n","is_ID":1}, {"symbol":"e","is_ID":0},{"symbol":" ","is_ID":2},{"symbol":"t","is_ID":3},{"symbol":"h","is_ID":1}, {"symbol":"i","is_ID":0},{"symbol":"s","is_ID":2},{"symbol":".","is_ID":3}];                                                                                             
 function setup() {
   myCanvas = createCanvas(windowWidth, windowHeight);
   myCanvas.parent('creativeCode');
   frameRate(rate);
+
+  shuffled_simple_this = new Array(4);
+  shuffled_simple_this[0] = shuffle(simple_this);
+  shuffled_simple_this[1] = shuffle(simple_this);
+  shuffled_simple_this[2] = shuffle(simple_this);
+  shuffled_simple_this[3] = shuffle(simple_this);
   i = 0;
   for (i = 0; i < 5; i++) {
     append(clock_pos_fixed, new Array());
@@ -156,7 +196,44 @@ function setup() {
     ax[i] = width / 2;
     ay[i] = height / 2;
   }
+ 
+   fill(color(255,255,255,255))
+  rect(500,100,300,300);
+  console.log(simple_this);
+  var ci = 0;
+  var cj = 0;
+  for (ci = 0; ci < 2; ci++) {
+    for (cj = 0; cj < 2; cj++) {
 
+      //draw_circle(center_x,center_y,radius, number_points,first_point,last_point,color,map=false) {
+    var some = draw_is(650+ci*180,250+cj*180,70, 12,0,12,color(130,233,255),shuffled_simple_this[(ci*2)+cj].slice(0,12));
+    var others = draw_is(650+ci*180,250+cj*180,40, 12,0,12,color(130,233,255),shuffled_simple_this[(ci*2)+cj].slice(12,24));
+    var cii=0;
+    var is_loc = [];
+    console.log(some,others);
+
+    for(cii =0; cii < some.length; cii++) {
+      is_loc.push(some[cii]);
+    }
+        for(cii =0; cii < others.length; cii++) {
+      is_loc.push(others[cii]);
+    }
+    locations.push(is_loc);
+    } 
+  }
+  var el = 0;
+  for(el = 0; el < a_racetrack.length; el++) {
+    console.log(locations[a_racetrack[el].is_ID]);
+    var ell = 0;
+    for (ell = 0; ell < locations[a_racetrack[el].is_ID].length; ell++) {
+      if (
+        locations[a_racetrack[el].is_ID][ell].symbol 
+        == a_racetrack[el].symbol) {
+        a_racetrack_positions.push({'x':locations[a_racetrack[el].is_ID][ell].x, 'y':locations[a_racetrack[el].is_ID][ell].y});
+      }
+   // a_racetrack_positions.push({'x':locations[a_racetrack[el]["is_ID"]][a_racetrack[el]["symbol"]].x,'y':locations[a_racetrack[el]["is_ID"]][a_racetrack[el]["symbol"]].y})
+  }
+  }
 }
 
 
@@ -418,16 +495,27 @@ if (((t-1) % 32) == 0) {
 
   star(star_x, star_y, 10, 18, 16);
 
+
   fill(color(255,255,255,255))
   rect(500,100,300,300);
-  console.log(simple_this);
+  //console.log(simple_this);
   var ci = 0;
   var cj = 0;
+  var locations = []
   for (ci = 0; ci < 2; ci++) {
     for (cj = 0; cj < 2; cj++) {
-      //draw_circle(center_x,center_y,radius, number_points,first_point,last_point,color,map=false) {
-		draw_circle(650+ci*180,250+cj*180,70, 12,0,12,color(130,233,255),shuffled_simple_this.slice(0,12));
-		draw_circle(650+ci*180,250+cj*180,40, 12,0,12,color(130,233,255),shuffled_simple_this.slice(12,24));   } 
+
+    draw_is(650+ci*180,250+cj*180,70, 12,0,12,color(130,233,255),shuffled_simple_this[(ci*2)+cj].slice(0,12));
+    draw_is(650+ci*180,250+cj*180,40, 12,0,12,color(130,233,255),shuffled_simple_this[(ci*2)+cj].slice(12,24));
+       } 
+  }
+
+  var el = 0;
+  for(el =0; el < a_racetrack_positions.length; el++) {
+    stroke(0,0,0,255);
+    strokeWeight(4);
+    line(a_racetrack_positions[el].x,a_racetrack_positions[el].y,a_racetrack_positions[(el+1) % a_racetrack_positions.length].x,a_racetrack_positions[(el+1) % a_racetrack_positions.length].y);
+    strokeWeight(1);
   }
   
   

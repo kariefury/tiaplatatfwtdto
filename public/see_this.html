@@ -109,7 +109,7 @@ var bluie;
 var greenie;
 var q;
 let theShader;
-
+var start = true;
 function bin_to_int(eightbits) {
   var c = 0;
   var weight = 128;
@@ -124,11 +124,34 @@ function bin_to_int(eightbits) {
 var keysEnteredOverTime = "";
 var sizes = [28, 28, 16, 16, 14, 14, 12, 12, 11, 11, 11, 11, 10, 10, 10, 10, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1];
 
+var possible_symbol_outcomes = {}
+possible_symbol_outcomes["T"] =[1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0];
+console.log(possible_symbol_outcomes["T"])
+  
+possible_symbol_outcomes["t"] = [0.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0];
+possible_symbol_outcomes["h"] = [0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0];
+possible_symbol_outcomes["i"] = [0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0];
+possible_symbol_outcomes["s"] = [0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0];
+possible_symbol_outcomes[" "] = [1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0];
+possible_symbol_outcomes["a"] = [1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["p"] = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["r"] = [1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["g"] = [1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["m"] = [1.0,1.0,1.0,1.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["l"] = [1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["n"] = [0.0,0.0,0.0,0.0,1.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["u"] = [0.0,1.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0];
+possible_symbol_outcomes["d"] = [0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["f"] = [0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,1.0,1.0,0.0,1.0];
+possible_symbol_outcomes["1"] = [0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["4"] = [1.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+possible_symbol_outcomes["."] = [1.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0];
+
 var center_x;
 var center_y;
 var img_of_this;
 var keycursor;
-
+var myLoop = " This is a programming language and these are the 14 words that define this. This is a programming language and these are the fourteen words that define this.";
 //var thisFont;
 function preload() {
   //thisFont = loadFont('assets/PermanentMarker-Regular.ttf');
@@ -187,7 +210,7 @@ var c_g = 0;
 var c_b = 0;
 
 var t = 0;
-var symbol_from_story = [1.0, // 0
+var original_symbol_from_story = [1.0, // 0
 1.0, // 1
 1.0, // 2
 1.0, // 3 
@@ -208,8 +231,10 @@ var symbol_from_story = [1.0, // 0
 1.0, // 18
 1.0, // 19 
 1.0];
+var symbol_from_story = original_symbol_from_story;
 
 function draw() {
+  console.log(start);
   //background(0);
   //console.log(img);
   //console.log(capture);
@@ -229,6 +254,14 @@ function draw() {
       theShader.setUniform('texSize',(displayWidth,displayHeight))
       theShader.setUniform('tex1',img);
       theShader.setUniform('start',start);
+      try {
+        var ttbvar = symbol_from_story[0];
+      } catch {
+        console.log("Catch the trouble")
+        console.log(original_symbol_from_story);
+        symbol_from_story = original_symbol_from_story;
+        start = false;
+      }
       theShader.setUniform('symbol_from_story_0',symbol_from_story[0]);
       theShader.setUniform('symbol_from_story_1',symbol_from_story[1]);
       theShader.setUniform('symbol_from_story_2',symbol_from_story[2]);
@@ -256,9 +289,14 @@ function draw() {
         capture_past = capture;
         
         var canvas = document.getElementById('defaultCanvas0');
-        console.log(canvas);
+        //console.log(canvas);
         var dataURL = canvas.toDataURL('image/png');
-        console.log(dataURL);
+        //console.log(dataURL);
+      }
+      if ((t+1) % 30 == 0) {
+        console.log(t+1,((t+1)/30), myLoop.length, myLoop[ ((t+1)/30) % myLoop.length], )
+        symbol_from_story = possible_symbol_outcomes[myLoop[((t+1)/30)%myLoop.length]];
+        start = true;
       }
    // console.log(t);
    //texture(capture);
@@ -362,71 +400,25 @@ function keyPressed() {
 }
 var rate = 1;
 var form = document.getElementById("paste");
-var start = false;
 var original = form.addEventListener("input", function (original) {
     console.log("Form has changed!");
-  start = true;
   var x = document.getElementById("paste").value;
   console.log(x,original.data);
-  if (original.data == "T") {
-    symbol_from_story = [1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0];
+  try {
+    console.log("The try")
+  symbol_from_story = possible_symbol_outcomes[original.data];
+  start = true;
+  } catch {
+    console.log("The catch");
+    symbol_from_story = original_symbol_from_story;
+    start = false;
   }
-  if (original.data == "t") {
-    symbol_from_story = [0.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0];
-  }
-  if (original.data == "h") {
-    symbol_from_story = [0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0];
-  }
-  if (original.data == "i") {
-    symbol_from_story = [0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0];
-  }
-  if (original.data == "s") {
-    symbol_from_story = [0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0];
-  }
+  
   if (original.data == " ") {
-  console.log(x.split(" ")); 
-    //socket.emit('whatisthis', x);
-  symbol_from_story = [1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0];
+   console.log(x.split(" ")); 
+   socket.emit('whatisthis', x);
   }
-  if (original.data == "a") {
-  symbol_from_story = [1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0];
-  }
-  if (original.data == "p") {
-  symbol_from_story = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
-  }
-  if (original.data == "r") {
-  symbol_from_story = [1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0];
-  }
-  if (original.data == "g") {
-  symbol_from_story = [1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
-  }
-  if (original.data == "m") {
-  symbol_from_story = [1.0,1.0,1.0,1.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
-  }
-  if (original.data == "l") {
-  symbol_from_story = [1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0];
-  }
-    if (original.data == "n") {
-  symbol_from_story = [0.0,0.0,0.0,0.0,1.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0];
-  }
-    if (original.data == "u") {
-  symbol_from_story = [0.0,1.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0];
-  }
-    if (original.data == "d") {
-  symbol_from_story = [0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
-  }
-  if (original.data == "f") {
-  symbol_from_story = [0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,1.0,1.0,0.0,1.0];
-  }
-  if (original.data == "1") {
-  symbol_from_story = [0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
-  }
-  if (original.data == "4") {
-  symbol_from_story = [1.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
-  }
-  if (original.data == ".") {
-  symbol_from_story = [1.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0];
-  }
+
   return x;
 });
 
