@@ -4,7 +4,7 @@
 
 <!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
 <head>
-    <title>Do you see This is a programming language</title>
+    <title>Data Reduction</title>
 
     <!-- Meta -->
     <meta charset="utf-8">
@@ -42,55 +42,7 @@
   </head>
 
 <body>
-    <!--=== Header ===-->    
-    <div class="header">
-        <!-- Topbar -->
-        <div class="topbar">
-            <div class="container">
-
-               <a href="this.html"> This is a programming language.<a>
-            
-                <!-- Topbar Navigation -->
-                <ul class="loginbar pull-right">
-                    <li class="languagesSelector">
-                        <i class="fa fa-globe"></i>
-                        <a>Languages</a>
-                        <ul class="languages">
-                            <li class="active">
-                                <a href="#">English <i class="fa fa-check"></i></a> 
-                            </li>
-                            <li><a href="#">Spanish</a></li>
-                            <li><a href="#">Russian</a></li>
-                            <li><a href="#">German</a></li>
-                        </ul>
-                    </li>
-                    <li class="topbar-devider"></li>   
-                    <li><a href="faq.html">faq</a></li>
-
-                </ul>
-                <!-- End Topbar Navigation -->
-            </div>
-        </div>
-        <!-- End Topbar -->
     
-    </div>
-    <!--=== End Header ===-->    
-
-    <div class="search-block parallaxBg">
-        <div class="container">
-            <div class="col-md-6 col-md-offset-3">
-                <div class="input-group">
-                    <input id="paste" type="text" class="form-control" placeholder="">
-                    <span class="input-group-btn">
-                        <button id="paste-go" class="first last btn-u btn-u-lg" type="button"><i class="fa fa-search"></i></button>
-                      </span>
-                  </div>
-              </div>
-          </div>    
-      </div>
-    </div>
-  </div>
-</div>
 <div id="creativeCode" class="wrapper">
     <!--=== Header ===-->    
 
@@ -102,6 +54,21 @@
 
 let capture;
 var myCanvas;
+// Accquiring assets for a thing is always a complicated topic. On one hand there is the ability to create your own assets. On the other is gaining permissions from other authors of assets or finding an asset creator and requesting a particular thing. 
+ //x,y,width,height
+ var saven = true;
+ var start = false; // Controls if the shader operates with filter or not.
+var myProcessMapRegions = [];
+//                       (-width/2),(-height/2),(width/2),(height/2), // This might need to be filled in based on the dimensions of the target image
+var myProcessMapColors = [];//[22,33,43,135, // Temporary numbers, intended to be used to color a unique subregion of area 
+                         // 94,281,14,131];
+                          // 4,143,139,31
+                          // 89,48,270,71,
+                          // 2,4,68,34,248,
+                          // 94,46,242,839,
+                          // 29,120,222,94,
+                          // 62,225,73,282,
+                          // 191,101,42,231]; // Need to fillin in preLoad with regions.
 var myColorsPopulationCode = "000000110011111100001011001110110000011100110111000001110010111100000111001111010000101100111110000001100011111100000111000111110000100100111111000010110001111100001011001111010000011100111110000010100011111100001011001101110000010100111111000001110011101100001011001011110000110100011111000011010010111100001101001101110000110100111011000011000011111100001101001111010000110100111110";
 var socket = io();
 var redie;
@@ -109,10 +76,16 @@ var bluie;
 var greenie;
 var q;
 let theShader;
-var start = true;
+
+var png_series = {}
+var channel_information = ""; // Need to save out where the channels are assigned to in their spots
+var temporal_series = ""; // To be saved as a string with format 'Channel ID (0-n) \t timeStamp (positive integer)'
 function bin_to_int(eightbits) {
   var c = 0;
-  var weight = 128;
+ // console.log(eightbits);
+  var weight = Math.pow(2,eightbits.length-1);
+
+// console.log(weight,eightbits.length-1);
   var n = 0;
   for (c = 0; c < eightbits.length; c++) {
     n = n + eightbits[c]*weight;
@@ -124,10 +97,10 @@ function bin_to_int(eightbits) {
 var keysEnteredOverTime = "";
 var sizes = [28, 28, 16, 16, 14, 14, 12, 12, 11, 11, 11, 11, 10, 10, 10, 10, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1];
 
-var possible_symbol_outcomes = {}
+var possible_symbol_outcomes = {} // The dictionary of symbols defines which kernel to use for what symbol.
+// The ratio of 1's and 0's are relatively close to the histogram for the phrase used to remember the temporal video sequence.  `
 possible_symbol_outcomes["T"] =[1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0];
-console.log(possible_symbol_outcomes["T"])
-  
+
 possible_symbol_outcomes["t"] = [0.0,0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0];
 possible_symbol_outcomes["h"] = [0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0];
 possible_symbol_outcomes["i"] = [0.0,0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0];
@@ -151,50 +124,92 @@ var center_x;
 var center_y;
 var img_of_this;
 var keycursor;
-var myLoop = " This is a programming language and these are the 14 words that define this. This is a programming language and these are the fourteen words that define this.";
-//var thisFont;
+var myLoop = " This is a programming language and these are the 14 words that define this. This is a programming language and these are the fourteen words that define this."; // The program works by repeating this phrase as it views a temporal series of images. 
+
 function preload() {
-  //thisFont = loadFont('assets/PermanentMarker-Regular.ttf');
-  theShader = loadShader('shader.vert','shader_convo.frag');
-  //img_of_this = loadImage('img/this_image.png');
-  //loadPixels();
+  theShader = loadShader('shader.vert','shader_convo.frag'); // Preload shaders to use GPU for calculations
 }
+
 
 var see;
 var img;
+var encoded_img;
 var capture_past;
+var populationCodeValues = "";
+
+var desiredCanvasWidth;
+var desiredCanvasHeight;
+
 function setup() {
   see = true;
   var q = 0;
-  img = createImage(displayWidth,displayHeight);
+  desiredCanvasWidth = 640;//360;//640;//360;//720;
+  desiredCanvasHeight = 360;//640;//360;//640;//1280;
+  
+  img = createImage(desiredCanvasWidth,desiredCanvasHeight);
   for(i = 0; i < img.width; i++) {
     for(j=0; j< img.height; j++) {
       redie =  bin_to_int(myColorsPopulationCode.slice(q,q+8));
-      bluie = bin_to_int(myColorsPopulationCode.slice(q+8,q+17));
-      greenie = bin_to_int(myColorsPopulationCode.slice(q+17,q+25));
-      alphaie = bin_to_int(myColorsPopulationCode.slice(q+25,q+33));
+      bluie = bin_to_int(myColorsPopulationCode.slice(q+8,q+16));
+      greenie = bin_to_int(myColorsPopulationCode.slice(q+16,q+24));
+      alphaie = bin_to_int(myColorsPopulationCode.slice(q+24,q+32));
 
-  //draw_circle(center_x,center_y,sizes[q%sizes.length], sizes.length,0,sizes.length,color(redie,greenie,bluie,alphaie));    
-  
-      q = q + 33;
-      if ( q > myColorsPopulationCode.length-33) {
+      populationCodeValues = populationCodeValues + str(bin_to_int(myColorsPopulationCode.slice(q,q+32))) + " ";
+      q = q + 32;
+      if ( q > myColorsPopulationCode.length-32) {
       q = 0;
       }
-      //console.log(redie,bluie,greenie);
       img.set(i,j,color(redie,greenie,bluie,alphaie));
-      //img.set(i,j,color(0,90,120));
     }
   }
   img.updatePixels();
+ 
   setAttributes('preserveDrawingBuffer', true);
-  myCanvas = createCanvas(displayWidth, displayHeight, WEBGL);
+  myCanvas = createCanvas(desiredCanvasWidth, desiredCanvasHeight, WEBGL);
   myCanvas.parent('creativeCode');
   
-  capture = createCapture(VIDEO);
+  capture = createVideo(['assets/cb4614bc-47577a9a.mov']); // cabc30fc-e7726578.mov //cb86b1d9-7735472c.mov  //['assets/cb4614bc-47577a9a.mov']);
+
   capture.hide();
+  //capture.size(100,100);
+  //capture.loop();
+  capture.play();
+
   q = 0;
   center_x = -width/2;
   center_y = -height/2;
+  capture.position(0,0);
+  let nRows = 5;
+  let nCols = 5;
+   for(let mp = 0; mp < nRows; mp++) {
+    for (let mq = 0; mq < nCols; mq++) {
+      myProcessMapRegions.push(int((mp*(width/nCols) ) + (-width/2)) ,int((mq*(height/nRows) ) + (-height/2)) , int(width/nCols), int(height/nRows));
+      myProcessMapColors.push(40*mp,128,128,mq*40+120)
+      }
+   }
+
+  nRows = 6;
+  nCols = 6;
+   for(let mp = 0; mp < nRows; mp++) {
+    for (let mq = 0; mq < nCols; mq++) {
+      myProcessMapRegions.push(int((mp*(width/nCols) ) + (-width/2)) ,int((mq*(height/nRows) ) + (-height/2)) , int(width/nCols), int(height/nRows));
+      myProcessMapColors.push(40*mp,128,128,mq*40+120)
+      }
+   } 
+
+  nRows = 7;
+  nCols = 7;
+   for(let mp = 0; mp < nRows; mp++) {
+    for (let mq = 0; mq < nCols; mq++) {
+      myProcessMapRegions.push(int((mp*(width/nCols) ) + (-width/2)) ,int((mq*(height/nRows) ) + (-height/2)) , int(width/nCols), int(height/nRows));
+      myProcessMapColors.push(40*mp,128,128,mq*40+120)
+      }
+   } 
+
+  //console.log(myProcessMapRegions,myProcessMapColors);
+  if (saven == true) {
+    saveJSON({"regions":myProcessMapRegions,"colors":myProcessMapColors}, 'processData.json');
+  }
   frameRate(30);
 }
 
@@ -233,32 +248,79 @@ var original_symbol_from_story = [1.0, // 0
 1.0];
 var symbol_from_story = original_symbol_from_story;
 
+function processImg(color_to_make,spot,imgW,imgH){
+  let process_map = createImage(imgW,imgH);
+          process_map.loadPixels();
+          let jje = 0;
+        //  console.log("process map",color_to_make,spot);
+          for (let ii = 0; ii < process_map.height*4; ii = ii+4) {
+            for (jje = ii*process_map.width; jje <  (ii*process_map.width)+(process_map.width*4); jje = jje+4) {
+              process_map.pixels[0+jje] = color_to_make[0];
+              process_map.pixels[1+jje] = color_to_make[1];
+              process_map.pixels[2+jje] = color_to_make[2];
+              process_map.pixels[3+jje] = color_to_make[3];
+            }
+          }
+          process_map.updatePixels();
+          //console.log(process_map);
+          image(process_map, spot[0],spot[1],spot[2],spot[3]);
+}
+
+function selectImgValues(imgA,spot) {
+  //console.log("spot",spot);
+  let toy = createImage(int(spot[2]), int(spot[3]));
+          toy.loadPixels();
+          //console.log("imgA pixels", imgA.pixels);
+          //console.log('toy to start', toy.height,toy.width);
+          let jj = 0;
+         var xs = int(spot[0]+width/2); // starting coordinate x
+          var ys =int(spot[1]+height/2); // starting y 
+          //console.log(width/2,height/2,spot[0],spot[1],xs,ys);
+          let sum_to_xor = 0;
+          let nSum = 0;
+
+          for (let ii = 0; ii < toy.height*4; ii = ii+4) {
+            //console.log(ii*toy.width, (ii*toy.width)+(toy.width*4) );
+        //    console.log(xs);
+            nSum = 0;
+            for (jj = ii*toy.width; jj <  (ii*toy.width)+(toy.width*4); jj = jj+4) {
+              toy.pixels[0+jj] = imgA.pixels[xs+0+((jj+ys)*4)];
+              toy.pixels[1+jj] = imgA.pixels[xs+1+((jj+ys)*4)];
+              toy.pixels[2+jj] = imgA.pixels[xs+2+((jj+ys)*4)];
+              toy.pixels[3+jj] = imgA.pixels[xs+3+((jj+ys)*4)];
+              nSum = nSum + (toy.pixels[0+jj] +toy.pixels[1+jj]+toy.pixels[2+jj]+toy.pixels[3+jj]);
+
+            }
+            //console.log(nSum);
+            sum_to_xor = sum_to_xor + nSum;
+          }
+          toy.updatePixels();
+  return (sum_to_xor % 2);
+}
+
 function draw() {
-  console.log(start);
-  //background(0);
-  //console.log(img);
-  //console.log(capture);
-  //image(img,-width/2, -height/2,width, height);
-  //filter(INVERT);
-  // shader() sets the active shader with our shader
-   
+   clear();
+  // console.log(populationCodeValues);
    if (see) {
 
-      //console.log(capture_past);
       shader(theShader);
       fill(t%255,255,255,255);
-      rect(-width/2,-height/2,width,height);   
+      rect(-width/2,-height/2,width,height);
+      console.log("width",width,"height",height);
+      console.log(capture.width,capture.height);
+     // image(capture, -width/2, -height/2,capture.width/2.0,capture.height/1.1);
+
       theShader.setUniform('tex0',capture);
       theShader.setUniform('past',img);
       theShader.setUniform('scale',1);
-      theShader.setUniform('texSize',(displayWidth,displayHeight))
+
+     // theShader.setUniform('texSize',(1280,720))
       theShader.setUniform('tex1',img);
       theShader.setUniform('start',start);
       try {
         var ttbvar = symbol_from_story[0];
       } catch {
         console.log("Catch the trouble")
-        console.log(original_symbol_from_story);
         symbol_from_story = original_symbol_from_story;
         start = false;
       }
@@ -285,18 +347,69 @@ function draw() {
        // console.log(get(100,100,9,9));
    }
    t++;
-    if (t % 200 == 0) {
+
+   
+    if (t % 2 == 0) {
+        //rotate(capture);
         capture_past = capture;
-        
+
         var canvas = document.getElementById('defaultCanvas0');
         //console.log(canvas);
+        if (saven == true) {
+          saveCanvas(canvas,str(t)+'.png');
+        }
         var dataURL = canvas.toDataURL('image/png');
+        //saveStrings(dataURL,str(t)+".txt");
+        //png_series[str(t)] = dataURL;
+        loadImage(dataURL, imgA => {
+          
+          //console.log("Loading the new image");
+          //image(imgA, -width/2, -height/2, width,height);
+
+          imgA.loadPixels();
+          //console.log(imgA.pixels);
+         //createGraphics(width,height);
+
+         //console.log(imgA.pixels[0],imgA.pixels[1],imgA.pixels[2],imgA.pixels[3]);
+          
+          let it = 0;
+          var subregion;
+          temporal_series = "";
+          for (it = 0; it < myProcessMapColors.length; it = it + 4) {
+                subregion = selectImgValues(imgA,myProcessMapRegions.slice(it,it+4));
+                console.log(subregion);
+                if (subregion > 0) {
+                  temporal_series += ( str(it/4) + "\t" + str(t) + "\n");
+                }
+                //image(subregion,-width/2,-height/2, 100,100);
+              }
+          if (saven == true) {
+           saveJSON({'temporal_series':temporal_series}, str(t)+"_temporal.aer");
+          }
+          //console.log(toy);
+          //image(toy, -width/2,-height/2,300,300);
+          //let im = 0;
+          //for (im = 0; im < myProcessMapColors.length; im = im + 4) {
+          //      processImg(myProcessMapColors.slice(im,im+4),myProcessMapRegions.slice(im,im+4),1,1);
+          //    }    
+          //console.log("temporal_series", temporal_series);
+          //console.log("pixels1",imgA.pixels[1]);
+        });
         //console.log(dataURL);
+        //image(encoded_img,-width/2, -height/2,width, height);
+        //see = false;
       }
+      //console.log(t, myLoop.length*30);
+      if (t == myLoop.length*30) {
+          //console.log(temporal_series);
+          //saveStrings([temporal_series], 'video_data.txt');
+          //saveJSON({'temporal_series':temporal_series },'spaceTimeCode.json')
+        }
+
       if ((t+1) % 30 == 0) {
-        console.log(t+1,((t+1)/30), myLoop.length, myLoop[ ((t+1)/30) % myLoop.length], )
         symbol_from_story = possible_symbol_outcomes[myLoop[((t+1)/30)%myLoop.length]];
-        start = true;
+        //start = true;
+        
       }
    // console.log(t);
    //texture(capture);
@@ -360,7 +473,7 @@ function draw() {
 //   K:::::::::::K       E:::::::::::::::E        Y:::::::::Y       I::::I  O:::::O     O:::::O
 //   K:::::::::::K       E:::::::::::::::E         Y:::::::Y        I::::I  O:::::O     O:::::O
 //   K::::::K:::::K      E::::::EEEEEEEEEE          Y:::::Y         I::::I  O:::::O     O:::::O
-//   K:::::K K:::::K     E:::::E                    Y:::::Y         I::::I  O:::::O     O:::::O
+//   K:::::K K:::::K     E:::::E                    Y:::::Y          I::::I  O:::::O     O:::::O
 // KK::::::K  K:::::KKK  E:::::E       EEEEEE       Y:::::Y         I::::I  O::::::O   O::::::O
 // K:::::::K   K::::::KEE::::::EEEEEEEE:::::E       Y:::::Y       II::::::IIO:::::::OOO:::::::O
 // K:::::::K    K:::::KE::::::::::::::::::::E    YYYY:::::YYYY    I::::::::I OO:::::::::::::OO 
@@ -399,28 +512,29 @@ function keyPressed() {
 
 }
 var rate = 1;
-var form = document.getElementById("paste");
-var original = form.addEventListener("input", function (original) {
-    console.log("Form has changed!");
-  var x = document.getElementById("paste").value;
-  console.log(x,original.data);
-  try {
-    console.log("The try")
-  symbol_from_story = possible_symbol_outcomes[original.data];
-  start = true;
-  } catch {
-    console.log("The catch");
-    symbol_from_story = original_symbol_from_story;
-    start = false;
-  }
+// Once used for interactive symbol manipulation. Not currently being expored. For Later.
+// var form = document.getElementById("paste");
+// var original = form.addEventListener("input", function (original) {
+//     console.log("Form has changed!");
+//   var x = document.getElementById("paste").value;
+//   console.log(x,original.data);
+//   try {
+//     console.log("The try")
+//   symbol_from_story = possible_symbol_outcomes[original.data];
+//   start = true;
+//   } catch {
+//     console.log("The catch");
+//     symbol_from_story = original_symbol_from_story;
+//     start = false;
+//   }
   
-  if (original.data == " ") {
-   console.log(x.split(" ")); 
-   socket.emit('whatisthis', x);
-  }
+//   if (original.data == " ") {
+//    console.log(x.split(" ")); 
+//    socket.emit('whatisthis', x);
+//   }
 
-  return x;
-});
+//   return x;
+//});
 
                </script>
 

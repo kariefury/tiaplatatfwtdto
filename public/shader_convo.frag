@@ -39,18 +39,16 @@ uniform float symbol_from_story_17;
 varying vec2 v_texCoord;
 
 void main() {
-  vec2 uv = vTexCoord;
-  vec2 uv_s = vTexCoord;
+  vec2 uv = v_texCoord; // vTexCoord;
+ // vec2 uv_s = vTexCoord;
 
   vec2 onePixel = vec2(1.0,1.0) / u_textureSize;
 
   // the texture is loaded upside down and backwards by default so lets flip it
-  uv.y = 1.0 - uv.y;
-  uv.x = 1.0 - uv.x;
+  uv.y = (1.0 - uv.y)*0.5;
+  //uv.y = (1.0 - uv.y);
+  uv.x = uv.x;
   
-  uv_s.y = uv.y*scale;
-  uv_s.x = (1.0 - uv.x);
-  vec4 tex_screen = texture2D(tex1,uv_s);
   vec4 tex_past = texture2D(past,uv);
   vec4 tex = texture2D(tex0, uv);
   
@@ -73,11 +71,6 @@ void main() {
    threshB = tex.b;
     };
 
-  //float threshR_s = tex.r*255 ;
-  
-  float threshG_s = (fract(floor(tex_screen.g*res)/scl)*scl) * gray ;
-  float threshB_s = (fract(floor(tex_screen.b*res)/scl)*scl) * gray ;
-  
   
   vec3 thresh = vec3(threshR,threshG,threshB);
   // render the output
