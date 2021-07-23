@@ -24,7 +24,7 @@ const app = express();
 // Listen to the App Engine-specified port, or 8080 otherwise
 const PORT = process.env.PORT || 8080;
 console.log(PORT);
-console.log(`Server running at http://${hostname}:${port}/`);
+console.log(`Server running at http://localhost:8080/`);
 var server = app.listen(PORT);
 var io = require('socket.io')(server);
 
